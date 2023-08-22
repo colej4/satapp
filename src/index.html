@@ -10,20 +10,20 @@
       <!-- Tab links -->
       <div style="background-color: #202123" class="tab">
         <ul class="tablist">
-          <li><button class="tablinks" onclick="openTab(event, 'London')"><img src="assets/map.png" alt ="Map"></button></li>
-          <li><button class="tablinks" onclick="openTab(event, 'Paris')"><img src="assets/stopwatch.png" alt ="Passes"></button></li>
-          <li><button class="tablinks" onclick="openTab(event, 'SDRPP')"><img src="assets/sdrpp.png" alt ="Connect to sdrpp"></button></li>
+          <li><button class="tablinks" onclick="openTab(event, 'map')"><img src="assets/map.png" alt ="Map"></button></li>
+          <li><button class="tablinks" onclick="openTab(event, 'next')"><img src="assets/stopwatch.png" alt ="Passes"></button></li>
+          <li><button class="tablinks" onclick="openTab(event, 'sdrpp')"><img src="assets/sdrpp.png" alt ="Connect to sdrpp"></button></li>
         </ul>
       </div>
     
     
 
     <!-- Tab content -->
-    <div id="London" class="tabcontent">
+    <div id="map" class="tabcontent">
       <canvas id="map-canvas"></canvas>
     </div>
     <script src="canvas.js"></script>
-    <div id="Paris" class="tabcontent">
+    <div id="next" class="tabcontent">
       <form id = "next-form">
         <input class="input-field" id="next-input" placeholder="Enter a NORAD ID..." />
         <button class="custom-button" type="submit">Find next passes</button>
@@ -31,7 +31,7 @@
       </form>
     </div>
 
-    <div id="SDRPP" class="tabcontent">
+    <div id="sdrpp" class="tabcontent">
       <form id = "listen-form">
         <input class="input-field" id="listen-id-input" placeholder="Enter a NORAD ID..." />
         <input class="input-field" id="listen-freq-input" placeholder="Enter a frequency..." />
