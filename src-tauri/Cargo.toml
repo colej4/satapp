@@ -1,0 +1,37 @@
+[package]
+name = "satapp"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.4", features = [] }
+
+[dependencies]
+tauri = { version = "1.4", features = ["shell-open"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rand = "0.8.5"
+hifitime = "3.8.2"
+chrono = "0.4.25"
+sgp4 = "1.2.2"
+anyhow = "1.0.71"
+ureq = { version = "*", features = ["json", "charset"] }
+substring = "1.4.5"
+lazy_static = "1.4"
+piston = "0.53.0"
+piston2d-graphics = "0.43.0"
+pistoncore-glutin_window = "0.71.0"
+piston2d-opengl_graphics = "0.82.0"
+piston_window = "0.128.0"
+glob = "0.3.1"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

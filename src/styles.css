@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:300,400,700&display=swap');
+* {
+  font-family: "Raleway", sans-serif !important;
+  color:#fff;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #2a2b32;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #343541;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  background-color: 525467;
+  border-radius: 10px;
+  margin-left: 80
+} 
+
+/* Style the sidebar */
+.tab {
+  width: 80px; /* Adjust as needed */
+  background-color: #333;
+  height: 100vh; /* Make the sidebar take the full viewport height */
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.tablist {
+  list-style-type: none;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.tablinks img{
+  max-width: 100%;
+  height: auto;
+}
+
+/* Style the input field */
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #2a2b32;
+  color: #fff;
+  margin-top: 10px;
+  box-sizing: border-box;
+  transition: 0.3s;
+}
+
+/* Change input field background color on focus */
+.input-field:focus {
+  background-color: #343541;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: #8e8ea0;
+}
+
+/* Style the button */
+.custom-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #2a2b32; /* Adjust the background color */
+  color: #fff;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Change button background color on hover */
+.custom-button:hover {
+  background-color: #343541;
+}
+
+/* Style the list */
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-item:nth-child(odd) {
+  background-color: #2a2b32;
+}
+
+.list-item:nth-child(even) {
+  background-color: #343541;
+}
+
+/* Apply the same padding and margin as tab buttons */
+.list-item {
+  padding: 14px 16px;
+  transition: 0.3s;
+  border-radius: 25px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
