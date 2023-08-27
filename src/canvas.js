@@ -5,7 +5,7 @@ let sats = [];
 
 
 // Initial zoom and pan values
-let zoom = 1;
+let zoom = 0.5;
 let panX = 0;
 let panY = 0;
 setInterval(updateSats, 1000);
@@ -14,7 +14,7 @@ setInterval(draw, 1000);
 function draw() {
 
     // Initial canvas size
-    canvas.width = window.innerWidth;
+    canvas.width = window.innerWidth - 150;
     canvas.height = window.innerHeight;
 
     // Clear the canvas
@@ -33,17 +33,14 @@ function draw() {
     context.beginPath();
     context.rect(0, 0, canvas.width, canvas.height);
     context.clip();
-
+    context.fillStyle = "white";
     // Draw the image
     context.drawImage(image, drawX, drawY, scaledWidth, scaledHeight);
+    context.globalAlpha = 0.75;
     sats.forEach(item => {
-        const marker = new Path2D();
-        marker.moveTo(drawX + zoom * item[0], drawY + zoom * item[1]);
-        marker.lineTo((drawX + zoom * item[0]) - 2 * zoom, (drawY + zoom * item[1]) - 3 * zoom);
-        marker.lineTo((drawX + zoom * item[0]) + 2 * zoom, (drawY + zoom * item[1]) - 3 * zoom);
-        marker.closePath();
-        context.globalAlpha = 0.75;
-        context.fill(marker);
+        let centerx = drawX + zoom * item[0];
+        let centery = drawY + zoom * item[1]
+        context.fillRect(centerx - 2, centery - 2, 4, 4);
     })
     
 
@@ -68,8 +65,12 @@ image.onload = () => {
 // Event listeners for zoom and pan
 window.addEventListener("wheel", (event) => {
     // Change the zoom level based on the scroll direction
-    zoom += event.deltaY * -0.01;
-    zoom = Math.max(0.5, zoom); // Limit zoom level
+    if (event.deltaY > 0) {
+        zoom = zoom * 0.9
+    } else {
+        zoom = zoom * 1.1
+    }
+    zoom = Math.max(0.1, zoom); // Limit zoom level
     draw();
     event.preventDefault();
 });

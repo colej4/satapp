@@ -224,27 +224,25 @@ pub fn get_positions(minutes: i32, elements: &Elements) -> Vec<GroundPos> {
 }
 
 fn lat_lon_to_x_y(g: &GroundPos) -> RectangularPoint {
-    let width = 1024.0;
-    let height = 1024.0;
-
-    let lat_rad = (g.lat) * PI / 180.0;
-
-    let x = (g.lon + 180.0) * (width / 360.0);
-    let mut y = f32::ln(f32::tan(PI/4.0 + lat_rad/2.0));
-    y = (height/2.0) -(width * y / (2.0 * PI));
+    
+    let width = 21600.0;
+    let height = 10800.0;
+    
+    let x: f32 = ((g.lon + 180.0) * (width  / 360.0));
+    let y: f32 = (((g.lat * -1.0) + 90.0) * (height / 180.0));
     return RectangularPoint { x: x, y: y, z: 0.0 };
 }
 
-#[tauri::command]
-pub async fn get_all_sat_x_y() -> Result<Vec<Vec<f32>>, String> {
+#[tauri::command(async)]
+pub fn get_all_sat_x_y() -> Result<Vec<Vec<i32>>, String> {
     let elements_vec = tle::load_all_elements();
-    let mut positions = vec![];
+    let mut positions: Vec<Vec<i32>> = vec![];
     for elements in &elements_vec {
                 
         let ground_pos = get_sat_lat_lon(Epoch::now().unwrap(), elements);
         if ground_pos.is_some() {
                 let r = lat_lon_to_x_y(&ground_pos.unwrap());
-                positions.push(vec![r.x, r.y]);
+                positions.push(vec![r.x as i32, r.y as i32]);
 
         }
     }
