@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body style="background-color: #343541;">
+    <!-- Tab links -->
+    <div style="background-color: #202123" class="tab">
+        <ul class="tablist">
+            <li><a class="tablinks" href="map.html"><img src="assets/map.png" alt="Map"></a></li>
+            <li><a class="tablinks" href="next.html"><img src="assets/stopwatch.png" alt="Passes"></a></li>
+            <li><a class="tablinks"><img src="assets/sdrpp.png" alt="Connect to sdrpp"></a></li>
+        </ul>
+    </div>
+
+    <!-- Tab content container -->
+    <div id="sdrpp" class="tabcontent">
+        <form id="listen-form">
+            <input class="input-field" id="listen-id-input" placeholder="Enter a NORAD ID..." />
+            <input class="input-field" id="listen-freq-input" placeholder="Enter a frequency..." />
+            <button class="custom-button" type="submit">Connect</button>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -242,7 +242,7 @@ pub fn get_all_sat_x_y() -> Result<Vec<Vec<i32>>, String> {
         let ground_pos = get_sat_lat_lon(Epoch::now().unwrap(), elements);
         if ground_pos.is_some() {
                 let r = lat_lon_to_x_y(&ground_pos.unwrap());
-                positions.push(vec![r.x as i32, r.y as i32]);
+                positions.push(vec![r.x as i32, r.y as i32, elements.norad_id as i32]);
 
         }
     }

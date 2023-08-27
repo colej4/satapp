@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body style="background-color: #343541;">
+  <!-- Tab links -->
+  <div style="background-color: #202123" class="tab">
+    <ul class="tablist">
+        <li><a class="tablinks" href="map.html"><img src="assets/map.png" alt="Map"></a></li>
+        <li><a class="tablinks"><img src="assets/stopwatch.png" alt="Passes"></a></li>
+        <li><a class="tablinks" href="sdrpp.html"><img src="assets/sdrpp.png" alt="Connect to sdrpp"></a></li>
+      </ul>
+  </div>
+  
+  <!-- Tab content container -->
+  <div id="next" class="tabcontent">
+    <form id = "next-form">
+      <input class="input-field" id="next-input" placeholder="Enter a NORAD ID..." />
+      <button class="custom-button" type="submit">Find next passes</button>
+      <ul class="list" id="pass-list"></ul>
+    </form>
+  </div>
+</body>
+</html>
+

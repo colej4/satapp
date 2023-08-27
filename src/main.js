@@ -4,29 +4,6 @@ let listenIdInput;
 let listenFreqInput;
 let nextInput;
 
-
-window.openTab = function(evt, tabName) {
-  let i;
-  let tabcontent;
-  let tablinks;
-
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-
-  const selectedTab = document.getElementById(tabName);
-  if (selectedTab) {
-    selectedTab.style.display = "block";
-  }
-  evt.currentTarget.className += " active";
-};
-
 async function listen() {
   await invoke("listen", {id: listenIdInput.value, freq: listenFreqInput.value})
     .then((message) => console.log(message))

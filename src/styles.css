@@ -5,7 +5,7 @@
 }
 
 /* Style the buttons that are used to open the tab content */
-.tab button {
+.tab a {
   background-color: inherit;
   float: left;
   border: none;
@@ -16,14 +16,14 @@
 }
 
 /* Change background color of buttons on hover */
-.tab button:hover {
+.tab a:hover {
   background-color: #2a2b32;
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
 }
 
 /* Create an active/current tablink class */
-.tab button.active {
+.tab a.active {
   background-color: #343541;
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
@@ -31,11 +31,10 @@
 
 /* Style the tab content */
 .tabcontent {
-  display: none;
   padding: 6px 12px;
   background-color: 525467;
   border-radius: 10px;
-  margin-left: 80
+  margin-left: 80px
 } 
 
 /* Style the sidebar */
