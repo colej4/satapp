@@ -88,6 +88,8 @@ pub fn get_sat_lat_lon(time: Epoch, elements: &Elements) -> Option<GroundPos> {
 
 }
 
+
+
 fn get_user_position(earth_rad: i32, lat: f32, lon: f32, epoch: Epoch) -> RectangularPoint{
     let user_ra = (calc_gmst(epoch) as f32) / 86400.0 * 360.0 + lon;
     let user_position = SphericalPoint{rho: earth_rad as f32, phi: (90.0 - lat) * PI / 180.0, theta: user_ra * PI / 180.0};
@@ -246,6 +248,26 @@ pub fn get_all_sat_x_y() -> Result<Vec<Vec<i32>>, String> {
 
         }
     }
+    return Ok(positions);
+}
+
+#[tauri::command(async)]
+pub fn get_all_r() -> Result<Vec<Vec<i32>>, String> {
+    let elements_vec = tle::load_all_elements();
+    let mut positions: Vec<Vec<i32>> = vec![];
+    for elements in &elements_vec {
+                
+        let pred_option = get_prediction(Epoch::now().unwrap(), elements);
+        if pred_option.is_some() {
+            let pred = pred_option.unwrap();
+            let x = pred.position.get(0).unwrap().clone() as i32;
+            let y = pred.position.get(1).unwrap().clone() as i32;
+            let z = pred.position.get(2).unwrap().clone() as i32;
+            positions.push(vec![x, y, z, elements.norad_id as i32]);
+        }
+    
+    }
+    println!("{:?}", positions[1]);
     return Ok(positions);
 }
 
