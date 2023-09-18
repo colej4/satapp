@@ -12,7 +12,7 @@ mod tracking;
 fn main() {
     tle::get_satellites();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![listen, next, get_all_sat_x_y, get_all_r])
+        .invoke_handler(tauri::generate_handler![listen, next, get_all_sat_x_y, get_all_r, calc_gmst_now])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

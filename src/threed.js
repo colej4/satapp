@@ -9,6 +9,7 @@ const loader = new THREE.TextureLoader
 let satCoords = [];
 let sats = [];
 let satsCreated = false;
+let earth;
 setInterval(updateSats, 1000);
 
 const renderer = new THREE.WebGLRenderer();
@@ -16,6 +17,7 @@ renderer.setSize( window.innerWidth - 120, window.innerHeight - 30 );
 let parent = document.body.querySelector(".tabcontent");
 console.log(parent);
 parent.appendChild( renderer.domElement );
+renderer.domElement.id = 'globeCanvas';
 
 const earthTexture = loader.load('/assets/earth.jpg');
 const normalTexture = loader.load('/assets/Earth-normal-8k.jpg', makeEarth, console.log("progess"), error => console.log(error));
@@ -26,7 +28,7 @@ function makeEarth() {
         normalMap: normalTexture,
 
     } );
-    const earth = new THREE.Mesh(
+    earth = new THREE.Mesh(
         new THREE.SphereGeometry(6369, 32, 32),
         earthmat
     );
@@ -37,7 +39,7 @@ function makeEarth() {
 
 function createSats() {
   console.log("createsats");
-  const geometry = new THREE.BoxGeometry(100, 100, 100);
+  const geometry = new THREE.BoxGeometry(50, 50, 50);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   
 
@@ -57,10 +59,14 @@ function animate() {
 	requestAnimationFrame( animate );
     console.log(sats);
     for (let i = 0; i < satCoords.length; i++) {
-        sats[i].position.x = satCoords[i][0];
+        sats[i].position.x = satCoords[i][1];
         sats[i].position.y = satCoords[i][2];
-        sats[i].position.z = satCoords[i][1];
+        sats[i].position.z = satCoords[i][0];
       }
+    invoke("calc_gmst_now").then((message) => {
+        earth.rotation.y = - (message / 86400.0 * 2 * Math.PI);
+        console.log(message / 86400.0 * 2 * Math.PI);
+    })
 	renderer.render( scene, camera );
 }
 animate();

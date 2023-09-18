@@ -41,7 +41,7 @@ fn spherical_to_lat_lon(s: &SphericalPoint, time: Epoch) -> GroundPos {
 }
 
 //returns current gmst in seconds
-fn calc_gmst(time: Epoch) -> f64 {
+pub fn calc_gmst(time: Epoch) -> f64 {
     let now = time;
     let s = (now.to_et_seconds() % 86400.0) - 43269.1839244;
     let t = (now.to_jde_et_days() - s / 86400.0 - 2451545.0) / 36525.0; //days since january 1, 4713 BC noon
@@ -50,6 +50,13 @@ fn calc_gmst(time: Epoch) -> f64 {
     let rot = (h0 + h1 * s) % 86400.0;
     return rot;
 }
+
+#[tauri::command]
+pub fn calc_gmst_now() -> f64 {
+    return calc_gmst(Epoch::now().unwrap());
+}
+
+
 
 fn get_prediction(time: Epoch, elements: &Elements) -> Option<Prediction>{
     let epoch = Epoch::from_str(format!("{} UTC", elements.datetime).as_str()).unwrap();

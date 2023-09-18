@@ -127,3 +127,11 @@
   margin-bottom: 2px;
 }
 
+#globeCanvas {
+  border-radius: 20px;
+}
+
+#map-canvas {
+  border-radius: 20px;
+}
+
