@@ -5,17 +5,21 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, (window.innerWidth - 120) / (window.innerHeight - 30), 0.1, 10000000 );
-const loader = new THREE.TextureLoader
+const loader = new THREE.TextureLoader;
 let satCoords = [];
 let sats = [];
 let satsCreated = false;
 let earth;
+let selectedSat = 0;
+let findInput;
+const selectedMaterial = new THREE.MeshBasicMaterial({color: 0xFF0000});
+const selectedGeo = new THREE.BoxGeometry(80, 80, 80);
+
 setInterval(updateSats, 1000);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth - 120, window.innerHeight - 30 );
 let parent = document.body.querySelector(".tabcontent");
-console.log(parent);
 parent.appendChild( renderer.domElement );
 renderer.domElement.id = 'globeCanvas';
 
@@ -38,9 +42,9 @@ function makeEarth() {
 
 
 function createSats() {
-  console.log("createsats");
-  const geometry = new THREE.BoxGeometry(50, 50, 50);
+  const geometry = new THREE.BoxGeometry(40, 40, 40);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  
   
 
   for (let i = 0; i < satCoords.length; i++) {
@@ -57,22 +61,26 @@ camera.position.z = 20000;
 
 function animate() {
 	requestAnimationFrame( animate );
-    console.log(sats);
+    
     for (let i = 0; i < satCoords.length; i++) {
         sats[i].position.x = satCoords[i][1];
         sats[i].position.y = satCoords[i][2];
         sats[i].position.z = satCoords[i][0];
+        
+        if (satCoords[i][3] == selectedSat) {
+            console.log("changing material of " + satCoords[i][3]);
+            sats[i].material = selectedMaterial;
+            sats[i].geometry = selectedGeo;
+        }
       }
     invoke("calc_gmst_now").then((message) => {
-        earth.rotation.y = - (message / 86400.0 * 2 * Math.PI);
-        console.log(message / 86400.0 * 2 * Math.PI);
+        earth.rotation.y = - (message / 86400.0 * 2 * Math.PI) + Math.PI;
     })
 	renderer.render( scene, camera );
 }
 animate();
 
 async function updateSats() {
-    console.log("starting")
     invoke("get_all_r").then((message) => {
         satCoords = message;
         if (satsCreated == false) {
@@ -93,3 +101,16 @@ function onWindowResize(){
     renderer.setSize( window.innerWidth - 120, window.innerHeight - 30);
 
 }
+
+function select() {
+    selectedSat = findInput.value;
+  }
+  
+ window.addEventListener("DOMContentLoaded", () => {
+  findInput = document.querySelector("#threed-input");
+  document.querySelector("#threed-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    select();
+  });
+});
+  

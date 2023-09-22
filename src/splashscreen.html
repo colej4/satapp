@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splash Screen</title>
+    <style>
+        /* Import the Raleway font from Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400&display=swap');
+
+        /* Splash screen styles */
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #333;
+        }
+
+        #splash-screen {
+            text-align: center;
+            color: #fff;
+        }
+
+        h1 {
+            font-family: 'Raleway', sans-serif; /* Apply the Raleway font */
+        }
+
+        #loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #loading-animation {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="splash-screen">
+        <h1>Updating TLEs</h1>
+        <div id="loading-container">
+            <div id="loading-animation"></div>
+        </div>
+    </div>
+</body>
+</html>

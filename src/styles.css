@@ -135,3 +135,11 @@
   border-radius: 20px;
 }
 
+#findSat {
+  position: absolute;
+  left: 110px;
+  top: 25px;
+  border-radius: 20px;
+  padding: 10px;
+}
+

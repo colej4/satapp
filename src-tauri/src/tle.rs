@@ -52,7 +52,6 @@ pub fn get_satellites() -> anyhow::Result<()> {
             file.seek(SeekFrom::Start(0)).unwrap();
             file.write_all(bytes).unwrap();
             count += 1;
-            println!("\r Loading satellites: {}/{}", count, len)
         }
         record_time(&path);
     }
