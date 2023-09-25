@@ -7,8 +7,6 @@ use ureq::serde_json::Value;
 use crate::tle;
 
 const C: f32 = 299792458.0;
-const NORADID: u32 = 28654;
-const TXFREQ: u32 = 137100000;
 
 
 //takes in a point in rectangular coordinates, returns spherical coordinates

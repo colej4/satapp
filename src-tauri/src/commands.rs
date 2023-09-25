@@ -1,9 +1,9 @@
-use std::{io::{stdin,stdout,Write, Read}, thread, time, env, fs::{self, OpenOptions, File}, path::Path};
+use std::{io::{stdin,stdout,Write, Read, Seek, SeekFrom}, thread, time, env, fs::{self, OpenOptions, File}, path::Path};
 use tauri::State;
 use hifitime::{Epoch, Duration, prelude::Formatter, efmt::consts::RFC2822};
 use ureq::serde_json;
 
-use crate::{tle::get_elements_from_json, rigctl, tracking};
+use crate::{tle::get_elements_from_json, rigctl, tracking, commands};
 /*pub fn read_command() {
     //read input line into a string "s"
     let mut s = String::new();
@@ -49,17 +49,19 @@ pub async fn next(id: &str) -> Result<Vec<String>, String>{
             let mut now = Epoch::now().unwrap();
             let elements_result = get_elements_from_json(idnum);
             let elements;
+            let lat = commands::get_lat();
+            let lon = commands::get_lon();
             match elements_result {
                 Err(err) => return Err(err),
                 Ok(result) => elements = result
             }
             let mut passes = vec![];
-            for i in 0..10 {
+            for j in 0..10 {
                 let mut first_pass: Option<Epoch> = None;
                 let mut num_mins: u32 = 0;
                 for i in 0..10080 {
                     let epoch = now + Duration::from_seconds(i as f64 * 60.0);
-                    match crate::tracking::get_elavation(6369555, 39.8468, -75.7116, &elements, epoch) {
+                    match crate::tracking::get_elavation(6369555, lat, lon, &elements, epoch) {
                         Some(ele) => if ele > 0.0 {
                             num_mins += 1;
                             if first_pass.is_none() {
@@ -80,10 +82,10 @@ pub async fn next(id: &str) -> Result<Vec<String>, String>{
                             //find the first and last second of the pass
                             let mut first_sec = epoch.clone();
                             let mut last_sec = epoch.clone();
-                            while crate::tracking::get_elavation(6369555, 39.8468, -75.7116, &elements, first_sec).unwrap() > 0.0 {
+                            while crate::tracking::get_elavation(6369555, lat, lon, &elements, first_sec).unwrap() > 0.0 {
                                 first_sec = first_sec - Duration::from_seconds(1.0);
                             }
-                            while crate::tracking::get_elavation(6369555, 39.8468, -75.7116, &elements, last_sec).unwrap() > 0.0 {
+                            while crate::tracking::get_elavation(6369555, lat, lon, &elements, last_sec).unwrap() > 0.0 {
                                 last_sec = last_sec + Duration::from_seconds(1.0);
                             }
                             now = last_sec + Duration::from_seconds(10.0);
@@ -115,8 +117,8 @@ pub async fn listen(id: &str, freq: &str) -> Result<String, String> {
             match freq.parse::<u32>() {
                 Ok(freqnum) => {
                     loop {
-                        println!("{}", freqnum + (tracking::calc_doppler_shift(6369555, 39.8468, -75.7116, freqnum as f32, &elements)) as u32);
-                        rigctl::set_frequency(freqnum + (tracking::calc_doppler_shift(6369555, 39.8468, -75.7116, freqnum as f32, &elements)) as u32);
+                        println!("{}", freqnum + (tracking::calc_doppler_shift(6369555, commands::get_lat(), commands::get_lon(), freqnum as f32, &elements)) as u32);
+                        rigctl::set_frequency(freqnum + (tracking::calc_doppler_shift(6369555, commands::get_lat(), commands::get_lon(), freqnum as f32, &elements)) as u32);
                         //thread::sleep(time::Duration::from_millis(50));
                     }
                 }
@@ -260,4 +262,49 @@ fn get_group(filename: &String) -> Vec<String> {
 
     let storage: Vec<String> = serde_json::from_str(json_string.as_str()).expect("failed to read from string");
     return storage;
+}
+
+#[tauri::command]
+pub fn write_settings(lat: String, lon: String) {
+    let settings = vec![lat, lon];
+    let mut path = env::current_exe().expect("error finding path to executable"); //finds path of executable
+    path.pop(); //goes to parent directory
+    path.push("settings"); //directory for "settings" folder
+    fs::create_dir_all(&path).expect("failed to craete settings directory");
+    let txt_path = path.clone().join("settings.txt");
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(txt_path)
+        .expect("error while accessing settings");
+    let json_string = serde_json::to_string_pretty(&settings).expect("failed to jsonify the string");
+    file.seek(SeekFrom::Start(0)).unwrap();
+    file.write_all(json_string.as_bytes()).unwrap();
+}
+
+#[tauri::command]
+pub fn read_settings() -> Vec<String> {
+    let mut path = env::current_exe().expect("error finding path to executable"); //finds path of executable
+    path.pop(); //goes to parent directory
+    path.push("settings"); //directory for "settings" folder
+    let path = path.clone().join("settings.txt");
+    let mut file = File::open(path).expect("failed to create file");
+    let mut json_string = String::new();
+    file.read_to_string(&mut json_string);
+
+    let storage: Vec<String> = serde_json::from_str(json_string.as_str()).expect("failed to read from string");
+    return storage;
+}
+
+pub fn get_lat() -> f32{
+    let lat = read_settings().get(0).unwrap().parse().unwrap();
+    print!("\nsuccessfully read value {}", lat);
+    return lat;
+}
+
+pub fn get_lon() -> f32{
+    let lon = read_settings().get(1).unwrap().parse().unwrap();
+    print!("\nsuccessfully read value {}", lon);
+    return lon;
 }

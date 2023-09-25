@@ -30,7 +30,9 @@ fn main() {
             next,
             get_all_sat_x_y,
             get_all_r,
-            calc_gmst_now
+            calc_gmst_now,
+            read_settings,
+            write_settings
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

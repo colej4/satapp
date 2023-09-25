@@ -64,17 +64,16 @@ function animate() {
     
     for (let i = 0; i < satCoords.length; i++) {
         sats[i].position.x = satCoords[i][1];
-        sats[i].position.y = satCoords[i][2];
+        sats[i].position.y = satCoords[i][2]; //for sure positive
         sats[i].position.z = satCoords[i][0];
         
         if (satCoords[i][3] == selectedSat) {
-            console.log("changing material of " + satCoords[i][3]);
             sats[i].material = selectedMaterial;
             sats[i].geometry = selectedGeo;
         }
       }
     invoke("calc_gmst_now").then((message) => {
-        earth.rotation.y = - (message / 86400.0 * 2 * Math.PI) + Math.PI;
+        earth.rotation.y =  (message / 86400.0 * 2 * Math.PI) - Math.PI/2;
     })
 	renderer.render( scene, camera );
 }
