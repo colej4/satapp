@@ -5,7 +5,7 @@ let settingsLon;
 
 
 async function write_settings() {
-  await invoke("write_settings", {lat: settingsLat.value, lon: settingsLon.value})
+  await invoke("write_settings", { lat: settingsLat.value, lon: settingsLon.value })
     .then((message) => console.log(message))
     .catch((error) => console.error(error))
 }
@@ -18,3 +18,13 @@ window.addEventListener("DOMContentLoaded", () => {
     write_settings();
   });
 });
+
+await invoke("get_lat")
+  .then((message) => document.getElementById("settings-lat-input").defaultValue = message.toFixed(5))
+  .catch((error) => console.error(error))
+
+
+await invoke("get_lon")
+  .then((message) => document.getElementById("settings-lon-input").defaultValue = message.toFixed(5))
+  .catch((error) => console.error(error))
+

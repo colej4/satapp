@@ -1,10 +1,11 @@
 use std::{f32::consts::PI, thread, time, str::FromStr};
+use serde::de::IntoDeserializer;
 use substring::Substring;
 use hifitime::prelude::*;
 use sgp4::{Elements, Prediction};
 use ureq::serde_json::Value;
 
-use crate::tle;
+use crate::tle::{self, get_elements_from_json};
 
 const C: f32 = 299792458.0;
 
@@ -93,6 +94,28 @@ pub fn get_sat_lat_lon(time: Epoch, elements: &Elements) -> Option<GroundPos> {
 
 }
 
+#[tauri::command]
+pub fn get_sat_lat(id: String) -> Result<f32, String>{
+    match id.parse::<u32>() {
+        Ok(idnum) => {
+            let elements = get_elements_from_json(idnum).unwrap();
+            return Ok(get_sat_lat_lon(Epoch::now().unwrap(), &elements).unwrap().lat)
+        }
+        Err(error) => return Err("failed to parse int".into())
+    } 
+}
+
+#[tauri::command]
+pub fn get_sat_lon(id: String) -> Result<f32, String>{
+    match id.parse::<u32>() {
+        Ok(idnum) => {
+            let elements = get_elements_from_json(idnum).unwrap();
+            return Ok(get_sat_lat_lon(Epoch::now().unwrap(), &elements).unwrap().lon)
+        }
+        Err(error) => return Err("failed to parse int".into())
+    } 
+}
+
 
 
 fn get_user_position(earth_rad: i32, lat: f32, lon: f32, epoch: Epoch) -> RectangularPoint{
@@ -159,6 +182,30 @@ fn get_azimuth(lat: f32, lon: f32, epoch: Epoch, elements: &Elements) -> Option<
     }
 
 }
+
+#[tauri::command]
+pub fn get_alt(id: String) -> Result<f32, String>{
+    match id.parse::<u32>() {
+        Ok(idnum) => {
+            let elements = get_elements_from_json(idnum).unwrap();
+            let pred_option = get_prediction(Epoch::now().unwrap(), &elements);
+            if pred_option.is_some() {
+                let pred = pred_option.unwrap();
+                let x = pred.position.get(0).unwrap().clone() as f32;
+                let y = pred.position.get(1).unwrap().clone() as f32;
+                let z = pred.position.get(2).unwrap().clone() as f32;
+                let pred_rect = RectangularPoint {x:x, y:y, z:z};
+                return Ok(point_mag(&pred_rect) - 6369.555);
+            }
+            else {
+                return Err("no pred".into());
+            }
+        }
+        Err(error) => return Err("failed to parse int".into())
+    } 
+
+}
+
 
 fn calc_reciever_velocity(earth_rad: i32, lat: f32, lon: f32) -> RectangularPoint{
     let user = get_user_position(earth_rad, lat, lon, Epoch::now().unwrap());

@@ -297,12 +297,14 @@ pub fn read_settings() -> Vec<String> {
     return storage;
 }
 
+#[tauri::command]
 pub fn get_lat() -> f32{
     let lat = read_settings().get(0).unwrap().parse().unwrap();
     print!("\nsuccessfully read value {}", lat);
     return lat;
 }
 
+#[tauri::command]
 pub fn get_lon() -> f32{
     let lon = read_settings().get(1).unwrap().parse().unwrap();
     print!("\nsuccessfully read value {}", lon);

@@ -32,7 +32,12 @@ fn main() {
             get_all_r,
             calc_gmst_now,
             read_settings,
-            write_settings
+            write_settings,
+            get_lat,
+            get_lon,
+            get_alt,
+            get_sat_lat,
+            get_sat_lon
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
