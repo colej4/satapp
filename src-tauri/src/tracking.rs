@@ -1,9 +1,6 @@
-use std::{f32::consts::PI, thread, time, str::FromStr};
-use serde::de::IntoDeserializer;
-use substring::Substring;
+use std::{f32::consts::PI, str::FromStr};
 use hifitime::prelude::*;
 use sgp4::{Elements, Prediction};
-use ureq::serde_json::Value;
 
 use crate::tle::{self, get_elements_from_json};
 
@@ -66,7 +63,7 @@ fn get_prediction(time: Epoch, elements: &Elements) -> Option<Prediction>{
         let prediction = constants.propagate(duration.to_seconds() / 60 as f64);
         match prediction {
             Ok(pred) => return Some(pred),
-            Err(e) => {
+            Err(_) => {
                 //println!("{:?} at sat {}", e, elements.norad_id);
                 return None
             }
@@ -77,7 +74,7 @@ fn get_prediction(time: Epoch, elements: &Elements) -> Option<Prediction>{
 }
 
 pub fn get_sat_lat_lon(time: Epoch, elements: &Elements) -> Option<GroundPos> {
-    let mut pred_option = get_prediction(time, elements);
+    let pred_option = get_prediction(time, elements);
     if pred_option.is_some() {
         let pred = pred_option.unwrap();
         let x = pred.position.get(0).unwrap().clone() as f32;
@@ -101,7 +98,7 @@ pub fn get_sat_lat(id: String) -> Result<f32, String>{
             let elements = get_elements_from_json(idnum).unwrap();
             return Ok(get_sat_lat_lon(Epoch::now().unwrap(), &elements).unwrap().lat)
         }
-        Err(error) => return Err("failed to parse int".into())
+        Err(_) => return Err("failed to parse int".into())
     } 
 }
 
@@ -112,7 +109,7 @@ pub fn get_sat_lon(id: String) -> Result<f32, String>{
             let elements = get_elements_from_json(idnum).unwrap();
             return Ok(get_sat_lat_lon(Epoch::now().unwrap(), &elements).unwrap().lon)
         }
-        Err(error) => return Err("failed to parse int".into())
+        Err(_) => return Err("failed to parse int".into())
     } 
 }
 
@@ -201,7 +198,7 @@ pub fn get_alt(id: String) -> Result<f32, String>{
                 return Err("no pred".into());
             }
         }
-        Err(error) => return Err("failed to parse int".into())
+        Err(_) => return Err("failed to parse int".into())
     } 
 
 }

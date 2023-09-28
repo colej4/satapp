@@ -1,24 +1,15 @@
-use anyhow::Error;
-use chrono::Duration;
+
 use hifitime::Epoch;
-use serde::{Deserialize, Serialize};
 use sgp4::Elements;
 use substring::Substring;
 use std::{
     env,
-    fs::{self, create_dir, create_dir_all, File, OpenOptions},
+    fs::{self, OpenOptions},
     io::{Seek, SeekFrom, Write},
     path::PathBuf,
     str::FromStr,
 };
-use glob::glob;
-use ureq::serde_json::{self, Value};
-struct Satellite {
-    id: u32,
-    name: String,
-    line1: String,
-    line2: String,
-}
+use ureq::serde_json::{self};
 
 pub fn get_satellites() -> anyhow::Result<()> {
     let mut path = env::current_exe().expect("error finding path to executable"); //finds path of executable
@@ -101,7 +92,7 @@ pub fn get_elements_from_json(norad_id: u32) -> Result<Elements, String> {
     let elements: sgp4::Elements;
     match elements_string_result {
         Ok(elements_string) => elements = serde_json::from_str(elements_string.as_str().trim()).unwrap(),
-        Err(error) => return Err("failed find satellite".into())
+        Err(_) => return Err("failed find satellite".into())
     }
     return Ok(elements);
 }

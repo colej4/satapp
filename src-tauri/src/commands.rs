@@ -1,5 +1,4 @@
-use std::{io::{stdin,stdout,Write, Read, Seek, SeekFrom}, thread, time, env, fs::{self, OpenOptions, File}, path::Path};
-use tauri::State;
+use std::{io::{Write, Read, Seek, SeekFrom}, env, fs::{self, OpenOptions, File}};
 use hifitime::{Epoch, Duration, prelude::Formatter, efmt::consts::RFC2822};
 use ureq::serde_json;
 
@@ -288,13 +287,25 @@ pub fn read_settings() -> Vec<String> {
     let mut path = env::current_exe().expect("error finding path to executable"); //finds path of executable
     path.pop(); //goes to parent directory
     path.push("settings"); //directory for "settings" folder
+    fs::create_dir_all(&path).expect("failed to craete settings directory");
     let path = path.clone().join("settings.txt");
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(path.clone())
+        .expect("error while accessing settings");
     let mut file = File::open(path).expect("failed to create file");
     let mut json_string = String::new();
     file.read_to_string(&mut json_string);
 
-    let storage: Vec<String> = serde_json::from_str(json_string.as_str()).expect("failed to read from string");
-    return storage;
+    let storage = serde_json::from_str(json_string.as_str());
+    if storage.is_ok() {
+        return storage.unwrap();
+    } else {
+        return vec!["0".into(), "0".into()];
+    }
+    
 }
 
 #[tauri::command]
