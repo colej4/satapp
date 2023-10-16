@@ -37,7 +37,9 @@ fn main() {
             get_lon,
             get_alt,
             get_sat_lat,
-            get_sat_lon
+            get_sat_lon,
+            get_name,
+            get_launch_date
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

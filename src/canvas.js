@@ -1,9 +1,13 @@
 const { invoke } = window.__TAURI__.tauri
+const { WebviewWindow } = window.__TAURI__.window;
+const { emit, listen } = window.__TAURI__.event;
 const canvas = document.getElementById("map-canvas");
 const context = canvas.getContext("2d");
 const rect = canvas.getBoundingClientRect();
 let sats = [];
 let selected = 100000;
+
+
 
 
 // Initial zoom and pan values
@@ -110,10 +114,10 @@ canvas.addEventListener("mousemove", (event) => {
 });
 
 window.addEventListener("mouseup", (event) => {
-    if (!isDragging) {
-
+    if (!isDragging && ((event.clientX < 110 || event.clientX > 340) || (event.clientY < 25 || event.clientY > 154))) {
         onclick(event)
     }
+    console.log("click at (" + event.clientX + ", " + event.clientY + ")");
     isDragging = false;
     mouseDown = false;
 });
@@ -128,6 +132,7 @@ function onclick(event) {
         if (event.data) {
             console.log(event.data);
             selected = event.data;
+            findInput.value = selected;
         }
     })
 }
@@ -144,3 +149,57 @@ function getCursorPosMap(event) {
 
     return [(event.clientX - rect.left - drawX) / zoom, (event.clientY - rect.top - drawY) / zoom];
 }
+
+function select() {
+    const webview = new WebviewWindow('popup', {
+        "width": 560,
+        "height": 220,
+        "url": "popup.html",
+        "label": "popup",
+        "title": "Info for selected satellite",
+        "resizable": false,
+        "alwaysOnTop": true
+        
+        
+    });
+    selected = findInput.value;
+    console.log("emitting selected", selected);
+    
+}
+
+window.addEventListener("mouseup", (event) => {
+    isDragging = false;
+});
+window.addEventListener("DOMContentLoaded", () => {
+    findInput = document.querySelector("#map-input");
+    document.querySelector("#map-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        select();
+        emit('selected', {
+            id: selected,
+        })
+    });
+});
+
+async function handleNeedSelected() {
+    await listen('needselected', (event) => {
+        emit('selected', {
+            id: selected,
+        })
+    });
+}
+
+handleNeedSelected();
+
+
+const zoomInButton = document.getElementById("zoom-in-button");
+const zoomOutButton = document.getElementById("zoom-out-button");
+
+zoomInButton.addEventListener("click", () => {
+    zoom *= 1.2;
+});
+
+zoomOutButton.addEventListener("click", () => {
+    zoom *= 0.8;
+});
+

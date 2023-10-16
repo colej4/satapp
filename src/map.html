@@ -19,6 +19,16 @@
   <!-- Tab content container -->
   <div id="map" class="tabcontent">
     <canvas id="map-canvas"></canvas>
+    <div id ="findSat" style="background-color: #343541;">
+      <form id = "map-form" action = "">
+        <input class="input-field" id="map-input" placeholder="Enter a NORAD ID..." />
+        <button class="custom-button" type="submit">Find satellite</button>
+      </form>
+    </div>
+    <div id="zoom-buttons" style="background-color: #343541;">
+      <button class="custom-button" id="zoom-in-button" style="font-size: 24px;">+</button>
+      <button class="custom-button" id="zoom-out-button" style="font-size: 24px;">-</button>
+    </div>
   </div>
   <script src="canvas.js"></script>
 </body>

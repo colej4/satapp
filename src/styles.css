@@ -141,6 +141,18 @@
   top: 25px;
   border-radius: 20px;
   padding: 10px;
+  pointer-events: all;
+  width: 145px;
+}
+
+#zoom-buttons {
+  position: absolute;
+  left: 280px;
+  top: 25px;
+  border-radius: 20px;
+  padding: 10px;
+  pointer-events: all;
+  width: 40px;
 }
 
 .input-container {
@@ -150,10 +162,17 @@
 }
 
 label {
-  width: 150px; /* Adjust the width as needed */
+  width: 100px;
   margin-right: 10px; /* Add some spacing between the label and input */
 }
 
 input {
   flex: 1; /* Allow the input field to expand and fill the remaining space */
+}
+
+.popup-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px; /* Add spacing between each pair of input elements */
+  line-height: 0px;
 }

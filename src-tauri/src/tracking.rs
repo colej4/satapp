@@ -320,6 +320,30 @@ pub fn get_all_r() -> Result<Vec<Vec<i32>>, String> {
     return Ok(positions);
 }
 
+#[tauri::command]
+pub fn get_name(id: String) -> Result<String, String>{
+    match id.parse::<u32>() {
+        Ok(idnum) => {
+            let elements = get_elements_from_json(idnum).unwrap();
+            return Ok(elements.object_name.unwrap())
+        }
+        Err(_) => return Err("failed to parse int".into())
+    } 
+}
+
+#[tauri::command]
+pub fn get_launch_date(id: String) -> Result<String, String> {
+    match id.parse::<u32>() {
+        Ok(idnum) => {
+            let elements = get_elements_from_json(idnum).unwrap();
+            let object_id = elements.international_designator.unwrap();
+            let launch_year = object_id[0..4].into();
+            return Ok(launch_year);
+        }
+        Err(_) => return Err("failed to parse int".into())
+    }
+}
+
 
 struct SphericalPoint {
     rho: f32,
