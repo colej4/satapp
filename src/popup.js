@@ -18,6 +18,7 @@ await listen('selected', (event) => {
 });
 
 async function fill() {
+  next.textContent = "Loading...";
   await invoke("get_alt", {id})
   .then((message) => {
     console.log("id is " + id);
@@ -41,7 +42,7 @@ async function fill() {
     .then((message) => {
     next.textContent = message[0];
     })
-    .catch((error) => console.error(error));
+    .catch((error) => next.textContent = error);
   }
   
   
