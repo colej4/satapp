@@ -20,7 +20,8 @@ const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
 const selectedMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
 const selectedGeo = new THREE.BoxGeometry(80, 80, 80);
 
-setInterval(updateSats, 500);
+
+setInterval(updateSats, 150);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth - 120, window.innerHeight - 30);
@@ -50,7 +51,7 @@ function makeEarth() {
 
 
 function createSats() {
-    const geometry = new THREE.BoxGeometry(100, 100, 100);
+    const geometry = new THREE.BoxGeometry(40, 40, 40);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 
