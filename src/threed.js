@@ -64,8 +64,6 @@ function createSats() {
 }
 
 const controls = new OrbitControls(camera, renderer.domElement);
-//controls.enableDamping = true;
-//controls.dampingFactor = 0.04;
 controls.rotateSpeed = 0.2;
 
 camera.position.z = 20000;
