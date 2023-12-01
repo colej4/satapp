@@ -166,8 +166,23 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-window.addEventListener('mousemove', (event) => {
+window.addEventListener('click', (event) => {
     const bounds = renderer.domElement.getBoundingClientRect();
     pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
     pointer.y = - ((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-});
+
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+        
+    for (let i = 0; i < intersects.length; i++) {
+        if (intersects[i].object !== earth) { // 💀
+            selectedSat = intersects[i].object.userData.id;
+            findInput = selectedSat;
+            select();
+            console.log(selectedSat);
+
+            break; // stop after one intersection
+        }
+    }
+
+})
