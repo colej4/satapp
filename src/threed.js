@@ -115,7 +115,7 @@ function onWindowResize() {
 }
 
 function select() {
-    const webview = new WebviewWindow('popup', {
+    webview = new WebviewWindow('popup', {
         "width": 560,
         "height": 220,
         "url": "popup.html",
@@ -155,7 +155,7 @@ window.addEventListener('click', (event) => {
     if (webview?.close) {
         webview.close();
     }
-    const bounds = renderer.domElement.getBoundingClientRect();
+     const bounds = renderer.domElement.getBoundingClientRect();
     pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
     pointer.y = - ((event.clientY - bounds.top) / bounds.height) * 2 + 1;
 
