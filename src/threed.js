@@ -148,24 +148,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-window.addEventListener('keydown', (event) => {
-    if (event.code === 'Space') {
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(scene.children);
-        
-        for (let i = 0; i < intersects.length; i++) {
-            if (intersects[i].object !== earth) { // 💀
-                selectedSat = intersects[i].object.userData.id;
-                findInput = selectedSat;
-                select();
-                console.log(selectedSat);
-
-                break; // stop after one intersection
-            }
-        }
-    }
-});
-
 window.addEventListener('click', (event) => {
     const bounds = renderer.domElement.getBoundingClientRect();
     pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
