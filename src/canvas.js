@@ -14,8 +14,8 @@ let selected = 100000;
 let zoom = 0.5;
 let panX = 0;
 let panY = 0;
-setInterval(updateSats, 1000);
-setInterval(draw, 1000);
+setInterval(updateSats, 200);
+setInterval(draw, 200);
 
 function draw() {
 

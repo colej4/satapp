@@ -23,21 +23,21 @@ async function fill() {
   .then((message) => {
     console.log("id is " + id);
     alt.textContent = message.toFixed(2);
-  });
+  }).catch((error) => alt.textContent = error);
   await invoke("get_sat_lat", {id})
   .then((message) => {
     lat.textContent = message.toFixed(3);
-  });
+  }).catch((error) => lat.textContent = error);
   await invoke("get_sat_lon", {id})
   .then((message) => {
     lon.textContent = message.toFixed(3);
-  });
+  }).catch((error) => lon.textContent = error);
   await invoke("get_name", {id}).then((message) => {
     satName.textContent = message;
-  });
+  }).catch((error) => satName.textContent = error);
   await invoke("get_launch_date", {id}).then((message) => {
     year.textContent = message;
-  });
+  }).catch((error) => year.textContent = error);
   await invoke("next", {id})
     .then((message) => {
     next.textContent = message[0];
