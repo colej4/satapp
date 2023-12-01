@@ -316,7 +316,7 @@ pub fn get_all_r() -> Result<Vec<Vec<i32>>, String> {
         }
     
     }
-    println!("{:?}", positions[1]);
+    //println!("{:?}", positions[1]);
     return Ok(positions);
 }
 

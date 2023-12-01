@@ -88,6 +88,7 @@ function animate() {
         earth.rotation.y = (message / 86400.0 * 2 * Math.PI) - Math.PI / 2;
     })
 
+    
     renderer.render(scene, camera);
 }
 animate();
@@ -130,16 +131,45 @@ function select() {
     
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-    findInput = document.querySelector("#map-input");
-    document.querySelector("#map-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        select();
-        emit('selected', {
-            id: selected,
-        })
-    });
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#threed-form");
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent the default form submission
+            const id = document.querySelector("#threed-input").value;
+            const satellite = getSatelliteByID(id);
+            if (satellite) {
+                selected = id;
+                findInput = selected;
+                focusOnSatellite(satellite);
+                select();
+            } else {
+                console.log("No satellite found with ID:", id);
+            }
+        });
+    } else {
+        console.error("Form not found");
+    }
 });
+
+function getSatelliteByID(id) {
+    for (let i = 0; i < sats.length; i++) {
+        if (sats[i].userData.id == id) {
+            return sats[i]; // Return the satellite mesh itself
+        }
+    }
+    console.log("Satellite with ID", id, "not found");
+    return null;
+}
+
+function focusOnSatellite(satellite) {
+    if (satellite) {
+        controls.target.copy(satellite.position);
+        controls.update();
+    } else {
+        console.error("Invalid satellite object passed to focusOnSatellite");
+    }
+}
 
 async function handleNeedSelected() {
     await listen('needselected', (event) => {
@@ -151,13 +181,14 @@ async function handleNeedSelected() {
 
 handleNeedSelected();
 
+
 window.addEventListener('click', (event) => {
     if (webview?.close) {
         webview.close();
     }
      const bounds = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-    pointer.y = - ((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+    pointer.x = (((event.clientX - bounds.left) / bounds.width) * 2 - 1);
+    pointer.y = (- ((event.clientY - bounds.top) / bounds.height) * 2 + 1);
 
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
@@ -166,6 +197,7 @@ window.addEventListener('click', (event) => {
         if (intersects[i].object !== earth) { // 💀
             selected = intersects[i].object.userData.id;
             findInput = selected;
+            focusOnSatellite(intersects[i].object);
             select();
 
             break; // stop after one intersection
