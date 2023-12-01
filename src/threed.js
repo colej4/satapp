@@ -86,8 +86,6 @@ function animate() {
         if (satCoords[i][3] == selectedSat) {
             sats[i].material = selectedMaterial;
             sats[i].geometry = selectedGeo;
-            findInput = selectedSat;
-            select();
         } else {
             sats[i].material = defaultMaterial;
         }
@@ -158,6 +156,8 @@ window.addEventListener('keydown', (event) => {
         for (let i = 0; i < intersects.length; i++) {
             if (intersects[i].object !== earth) { // 💀
                 selectedSat = intersects[i].object.userData.id;
+                findInput = selectedSat;
+                select();
                 console.log(selectedSat);
 
                 break; // stop after one intersection
