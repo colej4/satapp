@@ -387,7 +387,7 @@ pub fn get_all_r() -> Result<Vec<Vec<i32>>, String> {
                 positions.push(vec![x, y, z, elements.norad_id as i32]);
             }
         }
-        println!("{:?}", positions[1]);
+        //println!("{:?}", positions[1]);
         return Ok(positions);
     }
 }
