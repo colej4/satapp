@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const { WebviewWindow } = window.__TAURI__.window;
 
+let webview;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, (window.innerWidth - 120) / (window.innerHeight - 30), 0.1, 10000000);
@@ -123,7 +124,7 @@ function onWindowResize() {
 
 function select() {
     selectedSat = findInput;
-    const webview = new WebviewWindow('popup', {
+    webview = new WebviewWindow('popup', {
         "width": 560,
         "height": 220,
         "url": "popup.html",
@@ -149,6 +150,9 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener('click', (event) => {
+    if (webview?.close) {
+        webview.close();
+    }
     const bounds = renderer.domElement.getBoundingClientRect();
     pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
     pointer.y = - ((event.clientY - bounds.top) / bounds.height) * 2 + 1;
@@ -158,13 +162,21 @@ window.addEventListener('click', (event) => {
         
     for (let i = 0; i < intersects.length; i++) {
         if (intersects[i].object !== earth) { // 💀
+            
             selectedSat = intersects[i].object.userData.id;
             findInput = selectedSat;
             select();
-            console.log(selectedSat);
 
             break; // stop after one intersection
+        } else {
+            selectedSat = null;
+            findInput = null;
         }
+    }
+
+    if (intersects.length === 0 || intersects[0] == earth) {
+        selectedSat = null;
+        findInput = null;
     }
 
 })
