@@ -19,6 +19,8 @@ await listen('selected', (event) => {
 
 async function fill() {
   next.textContent = "Loading...";
+
+
   await invoke("get_alt", {id})
   .then((message) => {
     console.log("id is " + id);

@@ -12,18 +12,22 @@ let satCoords = [];
 let sats = [];
 let satsCreated = false;
 let earth;
-let selectedSat = 0;
+let selectedSat;
 let findInput;
+const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
 const selectedMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
 const selectedGeo = new THREE.BoxGeometry(80, 80, 80);
 
-setInterval(updateSats, 1000);
+setInterval(updateSats, 500);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth - 120, window.innerHeight - 30);
 let parent = document.body.querySelector(".tabcontent");
 parent.appendChild(renderer.domElement);
 renderer.domElement.id = 'globeCanvas';
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 
 const earthTexture = loader.load('/assets/earth.jpg');
 const normalTexture = loader.load('/assets/Earth-normal-8k.jpg', makeEarth, console.log("progess"), error => console.log(error));
@@ -44,13 +48,14 @@ function makeEarth() {
 
 
 function createSats() {
-    const geometry = new THREE.BoxGeometry(40, 40, 40);
+    const geometry = new THREE.BoxGeometry(100, 100, 100);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 
 
     for (let i = 0; i < satCoords.length; i++) {
         const sat = new THREE.Mesh(geometry, material);
+        sat.userData.id = satCoords[i][3];
         sats.push(sat);
         scene.add(sat);
     }
@@ -58,10 +63,19 @@ function createSats() {
 }
 
 const controls = new OrbitControls(camera, renderer.domElement);
+//controls.enableDamping = true;
+//controls.dampingFactor = 0.04;
+controls.rotateSpeed = 0.2;
 
 camera.position.z = 20000;
 
 function animate() {
+    
+
+
+
+
+
     requestAnimationFrame(animate);
 
     for (let i = 0; i < satCoords.length; i++) {
@@ -72,11 +86,17 @@ function animate() {
         if (satCoords[i][3] == selectedSat) {
             sats[i].material = selectedMaterial;
             sats[i].geometry = selectedGeo;
+            findInput = selectedSat;
+            select();
+        } else {
+            sats[i].material = defaultMaterial;
         }
     }
     invoke("calc_gmst_now").then((message) => {
         earth.rotation.y = (message / 86400.0 * 2 * Math.PI) - Math.PI / 2;
     })
+
+
     renderer.render(scene, camera);
 }
 animate();
@@ -104,7 +124,7 @@ function onWindowResize() {
 }
 
 function select() {
-    selectedSat = findInput.value;
+    selectedSat = findInput;
     const webview = new WebviewWindow('popup', {
         "width": 560,
         "height": 220,
@@ -128,4 +148,26 @@ window.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         select();
     });
+});
+
+window.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        
+        for (let i = 0; i < intersects.length; i++) {
+            if (intersects[i].object !== earth) { // 💀
+                selectedSat = intersects[i].object.userData.id;
+                console.log(selectedSat);
+
+                break; // stop after one intersection
+            }
+        }
+    }
+});
+
+window.addEventListener('mousemove', (event) => {
+    const bounds = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+    pointer.y = - ((event.clientY - bounds.top) / bounds.height) * 2 + 1;
 });
