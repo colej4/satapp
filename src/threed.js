@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const { WebviewWindow } = window.__TAURI__.window;
+const { emit, listen } = window.__TAURI__.event;
 
 let webview;
 
@@ -13,7 +14,7 @@ let satCoords = [];
 let sats = [];
 let satsCreated = false;
 let earth;
-let selectedSat;
+let selected;
 let findInput;
 const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
 const selectedMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
@@ -69,12 +70,6 @@ controls.rotateSpeed = 0.2;
 camera.position.z = 20000;
 
 function animate() {
-    
-
-
-
-
-
     requestAnimationFrame(animate);
 
     for (let i = 0; i < satCoords.length; i++) {
@@ -82,7 +77,7 @@ function animate() {
         sats[i].position.y = satCoords[i][2]; //for sure positive
         sats[i].position.z = satCoords[i][0];
 
-        if (satCoords[i][3] == selectedSat) {
+        if (satCoords[i][3] == selected) {
             sats[i].material = selectedMaterial;
             sats[i].geometry = selectedGeo;
         } else {
@@ -92,7 +87,6 @@ function animate() {
     invoke("calc_gmst_now").then((message) => {
         earth.rotation.y = (message / 86400.0 * 2 * Math.PI) - Math.PI / 2;
     })
-
 
     renderer.render(scene, camera);
 }
@@ -121,31 +115,41 @@ function onWindowResize() {
 }
 
 function select() {
-    selectedSat = findInput;
-    webview = new WebviewWindow('popup', {
+    const webview = new WebviewWindow('popup', {
         "width": 560,
         "height": 220,
         "url": "popup.html",
         "label": "popup",
-        "title": "Info for selected satellite"
-      })
-      // since the webview window is created asynchronously,
-      // Tauri emits the `tauri://created` and `tauri://error` to notify you of the creation response
-      webview.once('tauri://created', function () {
-        // webview window successfully created
-      })
-      webview.once('tauri://error', function (e) {
-        // an error occurred during webview window creation
-      })
+        "title": "Info for selected satellite",
+        "resizable": false,
+        "alwaysOnTop": true
+        
+        
+    });
+    console.log("emitting selected", selected);
+    
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    findInput = document.querySelector("#threed-input");
-    document.querySelector("#threed-form").addEventListener("submit", (e) => {
+    findInput = document.querySelector("#map-input");
+    document.querySelector("#map-form").addEventListener("submit", (e) => {
         e.preventDefault();
         select();
+        emit('selected', {
+            id: selected,
+        })
     });
 });
+
+async function handleNeedSelected() {
+    await listen('needselected', (event) => {
+        emit('selected', {
+            id: selected,
+        })
+    });
+}
+
+handleNeedSelected();
 
 window.addEventListener('click', (event) => {
     if (webview?.close) {
@@ -160,20 +164,19 @@ window.addEventListener('click', (event) => {
         
     for (let i = 0; i < intersects.length; i++) {
         if (intersects[i].object !== earth) { // 💀
-            
-            selectedSat = intersects[i].object.userData.id;
-            findInput = selectedSat;
+            selected = intersects[i].object.userData.id;
+            findInput = selected;
             select();
 
             break; // stop after one intersection
         } else {
-            selectedSat = null;
+            selected = null;
             findInput = null;
         }
     }
 
     if (intersects.length === 0 || intersects[0] == earth) {
-        selectedSat = null;
+        selected = null;
         findInput = null;
     }
 
